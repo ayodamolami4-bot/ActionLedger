@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light"/>
+  <title>ActionLedger | Local Execution Workbench</title>
+  <link rel="stylesheet" href="/console.css"/>
+  <script src="/console.js" type="module"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-symbol">A<span>.</span></div><div><strong>ActionLedger</strong><small>Tool execution control</small></div></div>
+      <div class="sidebar-group"><div class="nav active"><span>▤</span> Operations</div><div class="nav"><span>◷</span> Signed receipts</div><div class="nav"><span>◈</span> Review policy</div></div>
+      <div class="sidebar-note"><span class="dot"></span> LOCAL SIMULATION <p>Everything runs on your computer. No real email, payment or AI action is performed.</p></div>
+    </aside>
+    <main class="main">
+      <header><div class="eyebrow">ENGINEERING WORKBENCH / LOCAL DEMO</div><h1>Every action has a boundary.</h1><p>Review proposed operations, execute approved simulations and verify signed transition receipts.</p></header>
+      <section class="stats" aria-label="Action metrics">
+        <div class="stat"><small>TOTAL ACTIONS</small><strong id="total">0</strong><span>Recorded requests</span></div>
+        <div class="stat"><small>AWAITING APPROVAL</small><strong id="pending">0</strong><span>Human review needed</span></div>
+        <div class="stat"><small>DEAD LETTER</small><strong id="failed">0</strong><span>Retry limit reached</span></div>
+      </section>
+      <div class="content">
+        <section class="panel" aria-labelledby="queue-title">
+          <div class="section-header"><div><h2 id="queue-title">Execution queue</h2><p>States are loaded from SQLite through the backend API.</p></div><button type="button" class="secondary" id="refresh">Refresh</button></div>
+          <div id="actions" class="action-list" aria-live="polite"><div class="empty"><div class="empty-icon">↗</div><strong>No actions yet</strong><p>Create a test request from the control panel.</p></div></div>
+        </section>
+        <aside class="right">
+          <section class="panel controller" aria-labelledby="request-title">
+            <div class="eyebrow">REQUEST SIMULATOR</div><h2 id="request-title">New tool action</h2>
+            <label for="tool">Tool</label><select id="tool"><option value="lookup_customer">lookup_customer · low risk</option><option value="issue_refund">issue_refund · approval</option><option value="send_email">send_email · approval</option></select>
+            <label for="request-id" style="margin-top:14px">Idempotency key (optional)</label><input id="request-id" placeholder="Auto-generated if blank" maxlength="100" style="width:100%;padding:12px;border:1px solid #ced9ce;background:#fafbf7;border-radius:6px"/>
+            <label for="failure" style="margin-top:14px;display:flex;align-items:center;gap:8px"><input id="failure" type="checkbox"/> Simulate upstream failure</label>
+            <p>High-risk actions require a different actor to approve. All adapters are simulated.</p>
+            <button type="button" id="create">Create request <span>↗</span></button>
+            <button type="button" class="secondary full" id="run">Run worker once</button>
+          </section>
+          <section class="panel detail" aria-labelledby="details-title">
+            <div class="eyebrow">SELECTED ACTION</div><h2 id="details-title">Action details</h2>
+            <div id="detail"><p>Select an action to inspect its audit trail.</p></div>
+          </section>
+        </aside>
+      </div>
+      <p id="notice" class="notice" role="status" aria-live="polite" hidden></p>
+      <footer><span>ActionLedger v0.2 · Offline demo console</span><span>Idempotency • Review • Retries • Signed receipts</span></footer>
+    </main>
+  </div>
+</body>
+</html>
