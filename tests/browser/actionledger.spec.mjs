@@ -21,6 +21,8 @@ test('standalone console: approval, execution, receipts, and replay', async ({pa
   await expect(page.locator('#total')).toHaveText(String(before + 1));
   await expect(page.locator('#detail')).toContainText('Needs review');
   await expect(page.locator('#detail')).toContainText('Verified');
+  // Regression: a refresh during a busy operation must not leave review controls disabled.
+  await expect(page.locator('#detail').getByRole('button', {name: 'Approve'})).toBeEnabled();
   await page.locator('#detail').getByRole('button', {name: 'Approve'}).click();
   await expect(page.locator('#detail')).toContainText('Ready');
   await page.locator('#run').click();
