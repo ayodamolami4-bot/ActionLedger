@@ -15,7 +15,7 @@ An agent proposes an action. Low-risk reads enter a worker queue; high-risk oper
 - Signed per-transition audit receipts plus signature verification (HMAC-SHA256)
 - Node.js HTTP API, a **dependency-free same-origin web console**, React 19/Vite 8 console source, and automated domain tests
 
-**Verified locally on Linux:** `npm test` — **9 passing tests** on Node 22.16.0 (8 domain tests and 1 end-to-end HTTP integration test). The integration-test cleanup now waits for the child server to exit before deleting SQLite WAL files, with retries for Windows filesystem locks; re-test on Windows before claiming Windows compatibility. The integration test checks that the dependency-free console assets are served and validates the create → review → execute → verify flow against the real API. `node --check web/standalone.js` passes. The console itself has **not** passed a full browser interaction test here because Chromium network navigation was blocked by this environment. The React/Vite console also remains **unverified** because npm registry access was unavailable; it needs installation, typecheck, build and browser validation. Do not claim browser validation or deploy this prototype publicly.
+**Verified locally on Linux:** `npm test` — **9 passing tests** on Node 22.16.0 (8 domain tests and 1 end-to-end HTTP integration test). The integration-test cleanup now waits for the child server to exit before deleting SQLite WAL files, with retries for Windows filesystem locks; re-test on Windows before claiming Windows compatibility. The integration test checks that the dependency-free console assets are served and validates the create → review → execute → verify flow against the real API. `node --check web/standalone.js` passes. The console itself has **not** passed a full browser interaction test here because Chromium network navigation was blocked by this environment. The React/Vite console has passed GitHub Actions build checks. Browser interaction testing is being added separately; see the browser-smoke workflow run for confirmation. Do not claim browser validation or deploy this prototype publicly.
 
 ## Run it
 
@@ -105,7 +105,12 @@ The repository is intentionally small enough to review in one sitting and to ext
 - ✅ Domain tests: 8 passed.
 - ✅ HTTP integration test: 1 passed (real Node HTTP server; SQLite lifecycle; routes for console HTML/JS/CSS).
 - ✅ JavaScript syntax: `node --check web/standalone.js`.
-- ⏳ Browser click-through and mobile verification: not completed; sandbox Chromium blocks localhost and intercepted network navigation.
-- ⏳ React console and root TypeScript typecheck: dependencies could not be installed because the npm registry was unreachable.
-- ⏳ GitHub Actions: workflow is present but must run in the eventual new repository; no passing CI claim yet.
+- ⏳ Chromium browser click-through: automated PR check pending; mobile layout remains unverified in a real browser. This sandbox blocked localhost navigation.
+- ✅ React production build and root TypeScript typecheck: passed on GitHub Actions push run 41498685895.
+- ✅ GitHub Actions: initial API tests, root TypeScript typecheck and React build passed on run 41498685895.
+- ⏳ New Chromium browser-smoke job: not considered verified until its PR run passes.
 - 🔒 **Never expose the simulator API to the public internet.** `x-demo-role` is spoofable, `/worker/run-once` is unprotected, and a browser demo is not a substitute for real auth.
+
+## Browser smoke tests
+
+From the repository root run `npm install`, `npm install --prefix web`, `npx playwright install chromium`, then `npm run test:browser`. Playwright starts both local servers. Tests exercise only simulated transactions, reviewer approval and signature display; they save clearly labeled fictional screenshots. See [browser test scope](docs/browser-test-notes.md). **Do not expose the demo API publicly.**

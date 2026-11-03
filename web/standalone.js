@@ -7,7 +7,13 @@ let actions=[];let selected=null;let busy=false;
 const el=(tag,cls='',text='')=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text)n.textContent=text;return n};
 function note(message){$('notice').textContent=message;$('notice').hidden=!message}
 async function api(path, init){const res=await fetch(path,init);const data=await res.json();if(!res.ok)throw Error(data.error||`HTTP ${res.status}`);return data}
-function setBusy(next){busy=next;for(const id of ['create','run','refresh'])$(id).disabled=next}
+function setBusy(next){
+  busy=next;
+  for(const id of ['create','run','refresh'])$(id).disabled=next;
+  // Reviewer controls may be recreated while busy during refresh().
+  // Restore their enabled state after the request settles.
+  for(const button of document.querySelectorAll('#detail .buttons button'))button.disabled=next;
+}
 function createState(s){return el('span',`state ${s}`,states[s]||s)}
 async function refresh(){
   const data=await api('/actions');actions=data.actions;
