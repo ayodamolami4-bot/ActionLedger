@@ -51,7 +51,8 @@ test('React console: independent approval and verified execution', async ({page}
   await page.getByLabel('Tool').selectOption('issue_refund');
   await page.getByRole('button', {name: /Create request/}).click();
   await expect(page.locator('.action-list button.action')).toHaveCount(before + 1);
-  await page.locator('.action-list button.action').last().click();
+  // Queue renders newest-first. Select the just-created pending item, not the oldest entry.
+  await page.locator('.action-list button.action').filter({hasText: 'Needs review'}).first().click();
   await expect(page.locator('.detail')).toContainText('Needs review');
   await page.locator('.detail').getByRole('button', {name: 'Approve'}).click();
   await expect(page.locator('.detail')).toContainText('Ready');
